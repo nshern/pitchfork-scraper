@@ -1,19 +1,29 @@
 import requests
+from requests.adapters import HTTPAdapter
+from requests.exceptions import ConnectionError
 from bs4 import BeautifulSoup
 
-url = "https://www.pitchfork.com/reviews/albums/"
 
-response = requests.get(url)
+def get_album_links():
 
-soup = BeautifulSoup(response.content, "html.parser")
+    url = "https://www.pitchfork.com/reviews/albums/"
+    
+   # pitchfork_adapter = HTTPAdapter(max_retries=3)
+   # session = requests.session()
 
-album_links = [
-    link.get("href")
-    for link in soup.find_all("a")
-    if link.get("href").startswith("/reviews/albums/")
-    and "?genre=" not in link.get("href")
-    and link.get("href") != "/reviews/albums/"
-]
+    response = requests.get(url)
 
-for i in album_links:
-    print(i)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    album_links = [
+        link.get("href")
+        for link in soup.find_all("a")
+        if link.get("href").startswith("/reviews/albums/")
+        and "?genre=" not in link.get("href")
+        and link.get("href") != "/reviews/albums/"
+    ]
+
+    for i in album_links:
+        print(i)
+
+
