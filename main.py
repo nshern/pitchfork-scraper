@@ -1,7 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import requests
-from bs4 import BeautifulSoup
 
 url = "https://www.pitchfork.com/reviews/albums/"
 
