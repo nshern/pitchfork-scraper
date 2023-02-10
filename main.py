@@ -1,28 +1,21 @@
-
 import requests
 from bs4 import BeautifulSoup
-import csv
+import requests
+from bs4 import BeautifulSoup
 
-# Set the URL that you want to scrape
-url = "https://pitchfork.com/reviews/albums/ab-soul-herbert/"
+url = "https://www.pitchfork.com/reviews/albums/"
 
-# Make a request to the website
 response = requests.get(url)
 
-# Parse the HTML content of the page
-soup = BeautifulSoup(response.text, "html.parser")
+soup = BeautifulSoup(response.content, "html.parser")
 
-# Find the review div on the page
-review_div = soup.find("div", class_="review__body")
+album_links = [
+    link.get("href")
+    for link in soup.find_all("a")
+    if link.get("href").startswith("/reviews/albums/")
+    and "?genre=" not in link.get("href")
+    and link.get("href") != "/reviews/albums/"
+]
 
-# Find the review text
-review_text = review_div.find("div", class_="review__text").text.strip()
-
-# Create a CSV file to store the data
-with open("review.csv", "w", newline="") as csv_file:
-    # Create a CSV writer
-    writer = csv.writer(csv_file)
-    # Write the header row
-    writer.writerow(["review_text"])
-    # Write the review text to the CSV file
-    writer.writerow([review_text])
+for i in album_links:
+    print(i)
