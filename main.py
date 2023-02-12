@@ -2,11 +2,11 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
-def get_album_links(file):
-    path = Path(file)
-    if path.exists():
-        db = pd.read_csv(path)
-        existing_links = db["links"] 
+def get_album_links():
+#    path = Path(file)
+#    if path.exists():
+#        db = pd.read_csv(path)
+#        existing_links = db["links"] 
 
     counter = 1
     album_links = []
