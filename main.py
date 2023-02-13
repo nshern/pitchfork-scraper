@@ -15,7 +15,7 @@ def get_album_links():
     retries = 10
     s = requests.Session()
 
-    while retries > 0 and counter < 100:
+    while retries > 0:
         print(counter)
 
         params = {"page":counter}
