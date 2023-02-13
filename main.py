@@ -1,8 +1,8 @@
 from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
-import csv
 import os
+import time
 
 def get_album_links():
     
@@ -16,7 +16,11 @@ def get_album_links():
     s = requests.Session()
 
     while retries > 0:
-        print(counter)
+        if counter % 2 == 0:
+            print(f"scraping page {counter}..")
+        else:
+            print(f"scraping page {counter}...")
+
 
         params = {"page":counter}
         url = "https://www.pitchfork.com/reviews/albums/"
@@ -40,12 +44,16 @@ def get_album_links():
 
         except requests.exceptions.RequestException as ex:
             if response.status_code == 404:
-                print("reached end of the line")
+                print("reached end of the line!")
                 break
             else:
                 print(ex)
                 print("retrying...")
                 retries -= 1
+                time.sleep(10)
+
+        finally:
+            os.system('clear')
 
     flat_list = [item for sublist in album_links for item in sublist]
 
