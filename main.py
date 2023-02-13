@@ -18,7 +18,6 @@ def get_album_links(file):
     else:
         path.mkdir()
 
-
     counter = 1
     album_links = []
     retries = 10
