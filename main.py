@@ -2,25 +2,13 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 import csv
+import os
 
-#def _read_existing_csv(file):
-#    path = Path(file)
-#    if path.exists():
-#        if not (path.is_file() and path.suffix == ".csv"):
-#            raise TypeError("filetype needs to be .csv")
-#
-#        with open(file) as csvfile:
-#            reader = csv.reader(csvfile)
-#            
-#            links = ["".join(row) for row in reader]
-#            return links
-#
-#
-#    else:
-#        path.touch()
-
-
-def get_album_links(file):
+def get_album_links():
+    
+    data_folder = f"{os.getcwd()}/data/"
+    if not Path(data_folder).exists():
+        os.mkdir(data_folder)
 
     counter = 1
     album_links = []
@@ -48,9 +36,7 @@ def get_album_links(file):
 
             album_links.append(page_links)
             
-
             counter += 1
-
 
         except requests.exceptions.RequestException as ex:
             if response.status_code == 404:
@@ -66,11 +52,13 @@ def get_album_links(file):
     return flat_list
 
 if __name__ == "__main__":
-#    _read_existing_csv("output.csv")
-#    import os
-    l = get_album_links('output.csv')
+    from datetime import datetime
+
+    file_name = f'{os.getcwd()}/data/{datetime.now().strftime("%H%M%S%f")}.csv'
+
+    l = get_album_links()
 
     for i in l:
-        with open("output.csv", "a") as f:
+        with open(file_name, "a") as f:
             f.write(f"{i}\n")
 
