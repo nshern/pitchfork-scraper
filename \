@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import csv
 
 def get_album_links(file):
-#    breakpoint()
     path = Path(file)
     if path.exists():
         if not (path.is_file() and path.suffix == ".csv"):
@@ -12,13 +11,13 @@ def get_album_links(file):
 
         with open(file) as csvfile:
             reader = csv.reader(csvfile,delimiter=",")
-
             for row in reader:
-                print(row)
+                print(", ".join(row))
 
     else:
         path.mkdir()
 
+    breakpoint()
 
     counter = 1
     album_links = []
@@ -59,6 +58,8 @@ def get_album_links(file):
                 print("retrying...")
                 retries -= 1
 
+
+    return album_links
 
 if __name__ == "__main__":
     import pandas as pd
