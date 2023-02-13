@@ -3,27 +3,31 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
+#def _read_existing_csv(file):
+#    path = Path(file)
+#    if path.exists():
+#        if not (path.is_file() and path.suffix == ".csv"):
+#            raise TypeError("filetype needs to be .csv")
+#
+#        with open(file) as csvfile:
+#            reader = csv.reader(csvfile)
+#            
+#            links = ["".join(row) for row in reader]
+#            return links
+#
+#
+#    else:
+#        path.touch()
+
+
 def get_album_links(file):
-    path = Path(file)
-    if path.exists():
-        if not (path.is_file() and path.suffix == ".csv"):
-            raise TypeError("file need to be csv")
-
-        with open(file) as csvfile:
-            reader = csv.reader(csvfile,delimiter=",")
-
-            for row in reader:
-                print(row)
-
-    else:
-        path.mkdir()
 
     counter = 1
     album_links = []
     retries = 10
     s = requests.Session()
 
-    while retries > 0 and counter < 2:
+    while retries > 0 and counter < 100:
         print(counter)
 
         params = {"page":counter}
@@ -62,14 +66,11 @@ def get_album_links(file):
     return flat_list
 
 if __name__ == "__main__":
-    import os
-    l = get_album_links('df.csv')
+#    _read_existing_csv("output.csv")
+#    import os
+    l = get_album_links('output.csv')
 
-    os.remove("output.csv")
     for i in l:
         with open("output.csv", "a") as f:
-            if l.index(i) == 0:
-                f.write("links\n")
-            else: 
-                f.write(f"{i}\n")
+            f.write(f"{i}\n")
 
