@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import csv
 
 def get_album_links(file):
-#    breakpoint()
     path = Path(file)
     if path.exists():
         if not (path.is_file() and path.suffix == ".csv"):
@@ -25,9 +24,9 @@ def get_album_links(file):
     retries = 10
     s = requests.Session()
 
-    while retries > 0:
+    while retries > 0 and counter < 2:
         print(counter)
-    
+
         params = {"page":counter}
         url = "https://www.pitchfork.com/reviews/albums/"
 
@@ -59,20 +58,19 @@ def get_album_links(file):
                 print("retrying...")
                 retries -= 1
 
+    flat_list = [item for sublist in album_links for item in sublist]
+
+    return flat_list
 
 if __name__ == "__main__":
-    import pandas as pd
+    import os
+    l = get_album_links('df.csv')
 
-    #links = get_album_links()
-
-#    links = [item for sublist in get_album_links() for item in sublist]
-
-    df = pd.DataFrame()
-
-   # df["links"] = links
-
-    df.to_csv("df.csv")
-
-
-    get_album_links('df.csv')
+    os.remove("output.csv")
+    for i in l:
+        with open("output.csv", "a") as f:
+            if l.index(i) == 0:
+                f.write("links\n")
+            else: 
+                f.write(f"{i}\n")
 
