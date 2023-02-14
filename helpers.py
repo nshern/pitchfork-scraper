@@ -4,8 +4,9 @@ from bs4 import BeautifulSoup
 import os
 import time
 
+
 def get_album_links():
-    
+
     data_folder = f"{os.getcwd()}/data/"
     if not Path(data_folder).exists():
         os.mkdir(data_folder)
@@ -21,25 +22,24 @@ def get_album_links():
         else:
             print(f"scraping page {counter}...")
 
-
-        params = {"page":counter}
+        params = {"page": counter}
         url = "https://www.pitchfork.com/reviews/albums/"
 
         try:
-            response = s.get(url=url,params=params,timeout=10)
+            response = s.get(url=url, params=params, timeout=10)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
 
             page_links = [
-            link.get("href")
-            for link in soup.find_all("a")
-            if link.get("href").startswith("/reviews/albums/")
-            and "?genre=" not in link.get("href")
-            and link.get("href") != "/reviews/albums/"
+                link.get("href")
+                for link in soup.find_all("a")
+                if link.get("href").startswith("/reviews/albums/")
+                and "?genre=" not in link.get("href")
+                and link.get("href") != "/reviews/albums/"
             ]
 
             album_links.append(page_links)
-            
+
             counter += 1
 
         except requests.exceptions.RequestException as ex:
@@ -53,20 +53,37 @@ def get_album_links():
                 time.sleep(10)
 
         finally:
-            os.system('clear')
+            os.system("clear")
 
     flat_list = [item for sublist in album_links for item in sublist]
 
     return flat_list
 
+
+def get_album_scores(link, session):
+    # read albums
+
+    response = session.get(link)
+    soup = BeautifulSoup(response.content,"html.parser")
+    scores = soup.find_all("span", {"class":"score"})
+
+    return [i.text for i in scores]
+
 if __name__ == "__main__":
-    from datetime import datetime
+    with open("./data/081033650810.csv") as f:
+        links = f.readlines()
 
-    file_name = f'{os.getcwd()}/data/{datetime.now().strftime("%H%M%S%f")}.csv'
+    links = [line.rstrip("\n") for line in links]
 
-    l = get_album_links()
+    for link in links:
+        response = requests.get(f"https://www.pitchfork.com/{link}",timeout=5)
 
-    for i in l:
-        with open(file_name, "a") as f:
-            f.write(f"{i}\n")
+        soup = BeautifulSoup(response.content,"html.parser")
+
+        scores = soup.find_all("span", {"class":"score"})
+
+        if len(scores) != 1:
+            pass
+            # do something to handle mutiple scores
+            
 
