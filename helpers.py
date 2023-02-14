@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import time
+import hashlib
 
 
 def get_album_links():
@@ -59,31 +60,58 @@ def get_album_links():
 
     return flat_list
 
+def string_to_sha1(string):
+
+    return hashlib.sha1(string)
+
+
+def write_soup_to_html(soup, directory):
+
+    with open(directory, "w") as f:
+        f.write(soup.prettify())
+    
 
 def get_album_scores(link, session):
-    # read albums
 
-    response = session.get(link)
+    try:
+        response = session.get(link)
+        response.raise_for_status()
+        
+    except: 
+        raise Exception
+
+    print(response.status_code)
     soup = BeautifulSoup(response.content,"html.parser")
+    
     scores = soup.find_all("span", {"class":"score"})
 
     return [i.text for i in scores]
 
 if __name__ == "__main__":
-    with open("./data/081033650810.csv") as f:
-        links = f.readlines()
+    pass
+    
+   # with open("./data/081033650810.csv") as f:
+   #     links = f.readlines()
+   # 
+   # links = [line.rstrip("\n") for line in links]
 
-    links = [line.rstrip("\n") for line in links]
+   # s = requests.Session()
 
-    for link in links:
-        response = requests.get(f"https://www.pitchfork.com/{link}",timeout=5)
+   # for link in links[:10]:
+   #     link = f"https://www.pitchfork.com{link}"
+   #     print(get_album_scores(link=link,session=s))
+        
 
-        soup = BeautifulSoup(response.content,"html.parser")
 
-        scores = soup.find_all("span", {"class":"score"})
-
-        if len(scores) != 1:
-            pass
-            # do something to handle mutiple scores
-            
-
+#    for link in links:
+#        response = requests.get(f"https://www.pitchfork.com/{link}",timeout=5)
+#
+#        soup = BeautifulSoup(response.content,"html.parser")
+#
+#        scores = soup.find_all("span", {"class":"score"})
+#
+#        if len(scores) != 1:
+#            pass
+#            # do something to handle mutiple scores
+#            
+#
